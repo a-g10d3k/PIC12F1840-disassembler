@@ -30,7 +30,10 @@ const struct Operation *getOperation(uint bytes)
     for(int i = 0; i < OPERATION_TABLE_LENGTH; ++i)
     {
         const struct Operation *operation = &OPERATION_TABLE[i];
-        if(operation->opcode << (INSTRUCTION_LENGTH - operation->opcodeLength) == bytes & (0xffffu << (INSTRUCTION_LENGTH - operation->opcodeLength))) return operation;
+        if(operation->opcode << (INSTRUCTION_LENGTH - operation->opcodeLength) == bytes & (0xffffu << (INSTRUCTION_LENGTH - operation->opcodeLength)))
+        {
+            return operation;
+        }
     }
     return NULL;
 }
@@ -58,11 +61,20 @@ struct Instruction readInstruction(FILE *stream)
     return instruction;
 }
 
-//Write an instruction to stdout
-void writeInstruction(struct Instruction *instruction)
+//Write an instruction to stream
+void writeInstruction(struct Instruction *instruction, FILE *stream)
 {
-    if(!instruction) puts("ERROR");
-    else puts(instruction->operation->mnemonic);
+    if(!instruction->operation)
+    {
+        puts("aawawawa");
+        fputs("ERROR\n", stream);
+        puts("awa2");
+    }
+    else
+    {
+        fputs(instruction->operation->mnemonic, stream);
+        fputc('\n', stream);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -70,15 +82,25 @@ int main(int argc, char *argv[])
     switch(argc) {
         case 1:
         case 2:
-            fputs("pic12f1850-disassembler - Usage:\npic12f1850-disassembler [input filename] [output filename]", stdout);
+            fputs("pic12f1850-disassembler\n\nUsage:\npic12f1850-disassembler (input filename) (output filename)\n", stdout);
+            return 0;
             break;
     }
-    FILE *file = fopen(argv[1], "r");
-    FILE *file = fopen(argv[2], "w");
+    FILE *inFile = fopen(argv[1], "r+");
+    if(!inFile)
+    {
+        fputs("Can't open file\n", stderr);
+        return -1;
+    }
+    FILE *outFile = fopen(argv[2], "w+");
     for(int i = 0; i < MEMORY_SIZE; ++i) 
     {
-        struct Instruction instruction = readInstruction(file);
-        writeInstruction(&instruction);
+        fputs("whatever", outFile);
+        struct Instruction instruction = readInstruction(inFile);
+        //fputs("whatever", outFile);
+        writeInstruction(&instruction, outFile);
     }
+    fclose(inFile);
+    fclose(outFile);
 }
 
