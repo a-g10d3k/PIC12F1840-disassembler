@@ -43,8 +43,35 @@ const struct Operation OPERATION_TABLE[] =
     {0b001111u,         "INCFSZ",  6},
     {0b0100u,           "BCF" ,    4},
     {0b0101u,           "BSF" ,    4},
-    {0b100u ,           "CALL",    3},
-    {0b101u ,           "GOTO",    3},
+    {0b0110u,           "BTFSC",   4},
+    {0b0111u,           "BTFSS",   4},
+    {0b111110u,         "ADDLW",   6},
+    {0b111001u,         "ANDLW",   6},
+    {0b111000u,         "IORLW",   6},
+    {0b000000001u,      "MOVLB",   9},
+    {0b1100011u,        "MOVLP",   7},
+    {0b110000u,         "MOVLW",   6},
+    {0b111100u,         "SUBLW",   6},
+    {0b111010u,         "XORLW",   6},
+    {0b11001u,          "BRA",     5},
+    {0b00000000001011u, "BRW",    14},
+    {0b100u,            "CALL",    3},
+    {0b00000000001010u, "CALLW",  14},
+    {0b101u,            "GOTO",    3},
+    {0b00000000001001u, "RETFIE", 14},
+    {0b110100u,         "RETLW",   6},
+    {0b00000000001000u, "RETURN", 14},
+    {0b00000001100100u, "CLRWDT", 14},
+    {0b00000000000000u, "NOP",    14},
+    {0b00000001100010u, "OPTION", 14},
+    {0b00000000000001u, "RESET",  14},
+    {0b00000001100011u, "SLEEP",  14},
+    {0b00000001100u,    "TRIS",   11},
+    {0b1100010u,        "ADDFSR",  7},
+    {0b00000000010u,    "MOVIW",  11},
+    {0b1111110u,        "MOVIW",   7},
+    {0b00000000011u,    "MOVWI",  11},
+    {0b1111111u,        "MOVWI",   7}
 }; 
 const int OPERATION_TABLE_LENGTH = sizeof(OPERATION_TABLE) / sizeof(struct Operation);
 
@@ -53,11 +80,11 @@ const struct Operation *getOperation(uint bytes)
     for(int i = 0; i < OPERATION_TABLE_LENGTH; ++i)
     {
         const struct Operation *operation = &OPERATION_TABLE[i];
-        printf("instruction: %x\n", bytes);
+        //printf("instruction: %x\n", bytes);
         uint truncatedInstruction = bytes & (0xffffu << (INSTRUCTION_LENGTH - operation->opcodeLength));
-        printf("truncated instruction: %x\n", truncatedInstruction);
+       //printf("truncated instruction: %x\n", truncatedInstruction);
         uint offsetOpcode = operation->opcode << (INSTRUCTION_LENGTH - operation->opcodeLength);
-        printf("offset opcode: %x\n", offsetOpcode);
+        //printf("offset opcode: %x\n", offsetOpcode);
         if(offsetOpcode == truncatedInstruction)
         {
             return operation;
@@ -99,7 +126,7 @@ void writeInstruction(struct Instruction *instruction, FILE *stream)
     if(!instruction->operation)
     {
         //puts("aawawawa");
-        fputs("ERROR\n", stream);
+        fputs("??????\n", stream);
         //puts("awa2");
     }
     else
